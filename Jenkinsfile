@@ -1,28 +1,24 @@
-pipeline { 
-  
-   agent any
-
-   stages {
-   
-     stage('Build image') { 
-        steps { 
-           sh "docker image build -t amazing ."
+pipeline {
+    agent any
+    stages {
+        
+        stage('Git Clone') {
+            git 'https://github.com/Shantanugit/Docker_file1.git'
         }
-     }
-     
-     stage('Image Tag') { 
-        steps { 
-           sh "docker image tag amazing shantanudocker1/amazing:$BUILD_NUMBER"
+        
+        stage('Image Build') {
+            sh "docker image build -t imagename ."
         }
-      }
-
-         stage("Image Push") { 
-         steps { 
-           sh "docker image push shantanudocker1/amazing:$BUILD_NUMBER"
-         }
-
-     }
-  
-   	}
-
-   }
+        
+        stage('Image tag and Push') {
+            sh "docker image tag imagename shantanudocker1/imagename:$BUILD_NUMBER"
+            sh "docker image push shantanudocker1/imagename:$BUILD_NUMBER"
+        }
+        
+        stage('Delete Old Images') {
+            sh "docker image rmi shantanudocker1/imagename:$BUILD_NUMBER"
+        }
+        
+    }
+    
+}
